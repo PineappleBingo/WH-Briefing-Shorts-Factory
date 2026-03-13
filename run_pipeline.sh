@@ -192,10 +192,17 @@ fi
 
 step "8" "Rendering final videos"
 
-# Discover all part IDs from data.ts
-PARTS=$(node -e "
-  const { data } = require('./src/data.ts');
-  data.parts.forEach(p => console.log(p.id));
+# Discover all part IDs from clips JSON (used to generate data.ts)
+CLIPS_SOURCE="$CLIPS_INPUT"
+if [ ! -f "$CLIPS_SOURCE" ]; then
+  CLIPS_SOURCE=data/clips.json
+fi
+PARTS=$(python3 -c "
+import json, sys
+with open('$CLIPS_SOURCE') as f:
+    d = json.load(f)
+for p in d['parts']:
+    print(p['id'])
 " 2>/dev/null || echo "part1")
 
 RENDER_CMD="render:low"
@@ -240,7 +247,7 @@ for part in $PARTS; do
   fi
 
   SIZE=$(stat --format="%s" "$OUTPUT" 2>/dev/null || stat -f "%z" "$OUTPUT" 2>/dev/null || echo "0")
-  SIZE_MB=$(echo "scale=1; $SIZE / 1048576" | bc 2>/dev/null || echo "?")
+  SIZE_MB=$(python3 -c "print(f'{$SIZE/1048576:.1f}')" 2>/dev/null || echo "?")
   echo -e "  $part: ${SIZE_MB} MB"
 
   if [ "$HAS_FFPROBE" = true ]; then
