@@ -1,0 +1,17 @@
+node_modules/
+dist/
+output/
+.env
+*.mp4
+*.mp3
+*.wav
+
+# Pipeline intermediates (regenerated each run)
+data/transcript.json
+data/expressions_grouped.json
+data/clips.json
+data/clips_fixed.json
+
+# OS
+.DS_Store
+Thumbs.db

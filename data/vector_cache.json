@@ -1,0 +1,4 @@
+{
+  "_comment": "Offline fallback for Supabase pgvector. Populated by Analyst agent.",
+  "embeddings": []
+}
