@@ -23,15 +23,14 @@ export interface ShortsData {
   parts: Part[];
 }
 
-// Placeholder data for development preview
 export const data: ShortsData = {
   parts: [
     {
       id: "part1",
       clips: [
         {
-          start: 0,
-          end: 3,
+          start: 0.0,
+          end: 3.0,
           type: "hook",
           overlay: {
             en: "5 Key Expressions from Today's Briefing",
@@ -39,37 +38,457 @@ export const data: ShortsData = {
           },
         },
         {
-          start: 3,
-          end: 15,
+          start: 3.0,
+          end: 6.0,
           type: "expression",
           overlay: {
-            en: "CALL INTO QUESTION",
-            kr: "~에 의문을 제기하다",
+            en: "AFFORDABLE",
+            kr: "['affordable'의 한국어 설명]",
           },
           highlightColor: "#00BFFF",
         },
         {
-          start: 15,
-          end: 18,
+          start: 6.0,
+          end: 9.0,
           type: "freeze_frame",
           overlay: {
-            en: "to cause doubt about something",
-            kr: "무언가에 대해 의심을 갖게 만들다",
+            en: "[Definition of 'affordable']",
+            kr: "['affordable'의 한국어 설명]",
           },
         },
         {
-          start: 18,
-          end: 30,
+          start: 9.0,
+          end: 12.0,
           type: "expression",
           overlay: {
-            en: "UNDERSCORE",
-            kr: "강조하다",
+            en: "INDUSTRY",
+            kr: "['industry'의 한국어 설명]",
           },
           highlightColor: "#FFD700",
         },
         {
-          start: 30,
-          end: 35,
+          start: 12.0,
+          end: 15.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'industry']",
+            kr: "['industry'의 한국어 설명]",
+          },
+        },
+        {
+          start: 15.0,
+          end: 18.0,
+          type: "expression",
+          overlay: {
+            en: "ELECTIONS",
+            kr: "['elections'의 한국어 설명]",
+          },
+          highlightColor: "#FF6B6B",
+        },
+        {
+          start: 18.0,
+          end: 21.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'elections']",
+            kr: "['elections'의 한국어 설명]",
+          },
+        },
+        {
+          start: 21.0,
+          end: 24.0,
+          type: "expression",
+          overlay: {
+            en: "CONGRESS",
+            kr: "['congress'의 한국어 설명]",
+          },
+          highlightColor: "#7B68EE",
+        },
+        {
+          start: 24.0,
+          end: 27.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'congress']",
+            kr: "['congress'의 한국어 설명]",
+          },
+        },
+        {
+          start: 27.0,
+          end: 30.0,
+          type: "expression",
+          overlay: {
+            en: "INTEGRITY",
+            kr: "['integrity'의 한국어 설명]",
+          },
+          highlightColor: "#00FA9A",
+        },
+        {
+          start: 30.0,
+          end: 33.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'integrity']",
+            kr: "['integrity'의 한국어 설명]",
+          },
+        },
+        {
+          start: 33.0,
+          end: 38.0,
+          type: "wrapup",
+          overlay: {
+            en: "Like & Subscribe for more!",
+            kr: "좋아요와 구독 부탁드려요!",
+          },
+        },
+      ],
+    },
+    {
+      id: "part2",
+      clips: [
+        {
+          start: 0.0,
+          end: 3.0,
+          type: "hook",
+          overlay: {
+            en: "5 Key Expressions from Today's Briefing",
+            kr: "오늘 브리핑의 핵심 표현 5가지",
+          },
+        },
+        {
+          start: 3.0,
+          end: 6.0,
+          type: "expression",
+          overlay: {
+            en: "VALIDITY",
+            kr: "['validity'의 한국어 설명]",
+          },
+          highlightColor: "#00BFFF",
+        },
+        {
+          start: 6.0,
+          end: 9.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'validity']",
+            kr: "['validity'의 한국어 설명]",
+          },
+        },
+        {
+          start: 9.0,
+          end: 12.0,
+          type: "expression",
+          overlay: {
+            en: "REPUBLICANS",
+            kr: "['republicans'의 한국어 설명]",
+          },
+          highlightColor: "#FFD700",
+        },
+        {
+          start: 12.0,
+          end: 15.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'republicans']",
+            kr: "['republicans'의 한국어 설명]",
+          },
+        },
+        {
+          start: 15.0,
+          end: 18.0,
+          type: "expression",
+          overlay: {
+            en: "THREAT",
+            kr: "['threat'의 한국어 설명]",
+          },
+          highlightColor: "#FF6B6B",
+        },
+        {
+          start: 18.0,
+          end: 21.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'threat']",
+            kr: "['threat'의 한국어 설명]",
+          },
+        },
+        {
+          start: 21.0,
+          end: 24.0,
+          type: "expression",
+          overlay: {
+            en: "SECRETARY",
+            kr: "['secretary'의 한국어 설명]",
+          },
+          highlightColor: "#7B68EE",
+        },
+        {
+          start: 24.0,
+          end: 27.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'secretary']",
+            kr: "['secretary'의 한국어 설명]",
+          },
+        },
+        {
+          start: 27.0,
+          end: 30.0,
+          type: "expression",
+          overlay: {
+            en: "APPROPRIATE",
+            kr: "['appropriate'의 한국어 설명]",
+          },
+          highlightColor: "#00FA9A",
+        },
+        {
+          start: 30.0,
+          end: 33.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'appropriate']",
+            kr: "['appropriate'의 한국어 설명]",
+          },
+        },
+        {
+          start: 33.0,
+          end: 38.0,
+          type: "wrapup",
+          overlay: {
+            en: "Like & Subscribe for more!",
+            kr: "좋아요와 구독 부탁드려요!",
+          },
+        },
+      ],
+    },
+    {
+      id: "part3",
+      clips: [
+        {
+          start: 0.0,
+          end: 3.0,
+          type: "hook",
+          overlay: {
+            en: "5 Key Expressions from Today's Briefing",
+            kr: "오늘 브리핑의 핵심 표현 5가지",
+          },
+        },
+        {
+          start: 3.0,
+          end: 6.0,
+          type: "expression",
+          overlay: {
+            en: "THINKING",
+            kr: "['thinking'의 한국어 설명]",
+          },
+          highlightColor: "#00BFFF",
+        },
+        {
+          start: 6.0,
+          end: 9.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'thinking']",
+            kr: "['thinking'의 한국어 설명]",
+          },
+        },
+        {
+          start: 9.0,
+          end: 12.0,
+          type: "expression",
+          overlay: {
+            en: "OPERATION",
+            kr: "['operation'의 한국어 설명]",
+          },
+          highlightColor: "#FFD700",
+        },
+        {
+          start: 12.0,
+          end: 15.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'operation']",
+            kr: "['operation'의 한국어 설명]",
+          },
+        },
+        {
+          start: 15.0,
+          end: 18.0,
+          type: "expression",
+          overlay: {
+            en: "FILIBUSTER",
+            kr: "['filibuster'의 한국어 설명]",
+          },
+          highlightColor: "#FF6B6B",
+        },
+        {
+          start: 18.0,
+          end: 21.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'filibuster']",
+            kr: "['filibuster'의 한국어 설명]",
+          },
+        },
+        {
+          start: 21.0,
+          end: 24.749,
+          type: "expression",
+          overlay: {
+            en: "AMERICANS",
+            kr: "['americans'의 한국어 설명]",
+          },
+          highlightColor: "#7B68EE",
+        },
+        {
+          start: 24.749,
+          end: 27.749,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'americans']",
+            kr: "['americans'의 한국어 설명]",
+          },
+        },
+        {
+          start: 27.749,
+          end: 30.749,
+          type: "expression",
+          overlay: {
+            en: "AMERICANS",
+            kr: "['americans'의 한국어 설명]",
+          },
+          highlightColor: "#00FA9A",
+        },
+        {
+          start: 30.749,
+          end: 33.749,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'americans']",
+            kr: "['americans'의 한국어 설명]",
+          },
+        },
+        {
+          start: 33.749,
+          end: 38.749,
+          type: "wrapup",
+          overlay: {
+            en: "Like & Subscribe for more!",
+            kr: "좋아요와 구독 부탁드려요!",
+          },
+        },
+      ],
+    },
+    {
+      id: "part4",
+      clips: [
+        {
+          start: 0.0,
+          end: 3.0,
+          type: "hook",
+          overlay: {
+            en: "5 Key Expressions from Today's Briefing",
+            kr: "오늘 브리핑의 핵심 표현 5가지",
+          },
+        },
+        {
+          start: 3.0,
+          end: 6.0,
+          type: "expression",
+          overlay: {
+            en: "RUSSIAN",
+            kr: "['russian'의 한국어 설명]",
+          },
+          highlightColor: "#00BFFF",
+        },
+        {
+          start: 6.0,
+          end: 9.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'russian']",
+            kr: "['russian'의 한국어 설명]",
+          },
+        },
+        {
+          start: 9.0,
+          end: 12.0,
+          type: "expression",
+          overlay: {
+            en: "QUESTION",
+            kr: "['question'의 한국어 설명]",
+          },
+          highlightColor: "#FFD700",
+        },
+        {
+          start: 12.0,
+          end: 15.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'question']",
+            kr: "['question'의 한국어 설명]",
+          },
+        },
+        {
+          start: 15.0,
+          end: 18.0,
+          type: "expression",
+          overlay: {
+            en: "WHATEVER",
+            kr: "['whatever'의 한국어 설명]",
+          },
+          highlightColor: "#FF6B6B",
+        },
+        {
+          start: 18.0,
+          end: 21.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'whatever']",
+            kr: "['whatever'의 한국어 설명]",
+          },
+        },
+        {
+          start: 21.0,
+          end: 24.0,
+          type: "expression",
+          overlay: {
+            en: "CAROLINE",
+            kr: "['caroline'의 한국어 설명]",
+          },
+          highlightColor: "#7B68EE",
+        },
+        {
+          start: 24.0,
+          end: 27.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'caroline']",
+            kr: "['caroline'의 한국어 설명]",
+          },
+        },
+        {
+          start: 27.0,
+          end: 30.0,
+          type: "expression",
+          overlay: {
+            en: "COALITION",
+            kr: "['coalition'의 한국어 설명]",
+          },
+          highlightColor: "#00FA9A",
+        },
+        {
+          start: 30.0,
+          end: 33.0,
+          type: "freeze_frame",
+          overlay: {
+            en: "[Definition of 'coalition']",
+            kr: "['coalition'의 한국어 설명]",
+          },
+        },
+        {
+          start: 33.0,
+          end: 38.0,
           type: "wrapup",
           overlay: {
             en: "Like & Subscribe for more!",
