@@ -2,11 +2,11 @@
 Content Production — convert grouped expressions to clip definitions.
 Usage: python pipeline/expressions_to_clips.py --in data/expressions_grouped.json --out data/clips.json
 
-Transforms expression groups into timed clip sequences with:
-  - Hook segment (3s)
-  - Expression segments (original video timestamps)
-  - Freeze frame segments (3s each, for Korean explanation)
-  - Wrapup segment (5s)
+Transforms expression groups into timed clip sequences using the 3-pass
+repetition pattern per expression:
+  1. expression_raw   — hear the expression naturally in context
+  2. expression_blank  — replay with keyword blanked (cloze recall)
+  3. expression_reveal — keyword highlighted + definition + Korean
 """
 
 import argparse
@@ -16,13 +16,15 @@ import sys
 
 # Segment durations in seconds
 HOOK_DURATION = 3.0
-FREEZE_FRAME_DURATION = 3.0
+RAW_DURATION = 5.0        # Pass 1: hear it naturally
+BLANK_DURATION = 4.0      # Pass 2: try to recall
+REVEAL_DURATION = 5.0     # Pass 3: full reveal with definition
 WRAPUP_DURATION = 5.0
 MAX_SHORT_DURATION = 180.0
 
 
 def build_clips_for_group(group: dict) -> dict:
-    """Convert a single expression group into a timed clip sequence."""
+    """Convert a single expression group into a 3-pass clip sequence."""
     clips = []
     cursor = 0.0  # running clock for the Short
 
@@ -35,45 +37,59 @@ def build_clips_for_group(group: dict) -> dict:
     })
     cursor += HOOK_DURATION
 
-    # 2. Expression + freeze_frame pairs
+    # 2. Three passes per expression: raw → blank → reveal
     for expr in group["expressions"]:
-        # Calculate expression segment duration from original timestamps
-        original_duration = expr["end"] - expr["start"]
-        # Clamp to reasonable bounds: at least 3s, at most 20s
-        expr_duration = max(3.0, min(20.0, original_duration))
+        keyword = expr["expression"]
+        original_sentence = expr["original_sentence"]
+        highlight_color = expr.get("highlight_color", "#00BFFF")
 
-        # Check if adding this expression would exceed max duration
-        needed = expr_duration + FREEZE_FRAME_DURATION
+        # Calculate how much time this expression needs
+        needed = RAW_DURATION + BLANK_DURATION + REVEAL_DURATION
         if cursor + needed + WRAPUP_DURATION > MAX_SHORT_DURATION:
             break
 
-        # Expression segment (playing original video)
+        # Pass 1: RAW — hear the expression naturally in context
         clips.append({
             "start": round(cursor, 3),
-            "end": round(cursor + expr_duration, 3),
-            "type": "expression",
+            "end": round(cursor + RAW_DURATION, 3),
+            "type": "expression_raw",
             "overlay": {
-                "en": expr["expression"],
-                "kr": expr["explanation_kr"],
+                "en": original_sentence,
+                "kr": "",
             },
-            "highlightColor": expr.get("highlight_color", "#00BFFF"),
-            # Store original timestamps for video sourcing
+            "keyword": keyword,
+            "highlightColor": highlight_color,
             "_source_start": expr["start"],
             "_source_end": expr["end"],
         })
-        cursor += expr_duration
+        cursor += RAW_DURATION
 
-        # Freeze frame segment (Korean explanation overlay)
+        # Pass 2: BLANK — replay with keyword blanked out (cloze deletion)
         clips.append({
             "start": round(cursor, 3),
-            "end": round(cursor + FREEZE_FRAME_DURATION, 3),
-            "type": "freeze_frame",
+            "end": round(cursor + BLANK_DURATION, 3),
+            "type": "expression_blank",
+            "overlay": {
+                "en": original_sentence,
+                "kr": expr["explanation_kr"],
+            },
+            "keyword": keyword,
+        })
+        cursor += BLANK_DURATION
+
+        # Pass 3: REVEAL — keyword highlighted + definition + Korean
+        clips.append({
+            "start": round(cursor, 3),
+            "end": round(cursor + REVEAL_DURATION, 3),
+            "type": "expression_reveal",
             "overlay": {
                 "en": expr["definition_en"],
                 "kr": expr["explanation_kr"],
             },
+            "keyword": keyword,
+            "highlightColor": highlight_color,
         })
-        cursor += FREEZE_FRAME_DURATION
+        cursor += REVEAL_DURATION
 
     # 3. Wrapup segment
     clips.append({
@@ -109,8 +125,8 @@ def main():
     for group in groups:
         part = build_clips_for_group(group)
         total_duration = part["clips"][-1]["end"] if part["clips"] else 0
-        expr_count = sum(1 for c in part["clips"] if c["type"] == "expression")
-        print(f"    {part['id']}: {expr_count} expressions, {total_duration:.1f}s total")
+        expr_count = sum(1 for c in part["clips"] if c["type"] == "expression_raw")
+        print(f"    {part['id']}: {expr_count} expressions x 3 passes, {total_duration:.1f}s total")
 
         if total_duration > MAX_SHORT_DURATION:
             print(f"    WARNING: {part['id']} exceeds {MAX_SHORT_DURATION}s — QA will trim", file=sys.stderr)

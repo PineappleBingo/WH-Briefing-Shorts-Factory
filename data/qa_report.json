@@ -1,0 +1,134 @@
+{
+  "total_issues": 16,
+  "all_passed": false,
+  "issues": [
+    {
+      "part": "part1",
+      "clip": 1,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "7725 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 2,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "7725 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 4,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "6703 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 5,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "6703 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 7,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "4381 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 8,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "4381 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 10,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1460 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 11,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1460 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 13,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "950 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part1",
+      "clip": 14,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "950 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 1,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "2582 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 2,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "2582 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 7,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1236 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 8,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1236 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 10,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1957 chars (max 42)",
+      "auto_fixed": true
+    },
+    {
+      "part": "part2",
+      "clip": 11,
+      "field": "overlay.en[0]",
+      "rule": "max_chars_per_line",
+      "detail": "1957 chars (max 42)",
+      "auto_fixed": true
+    }
+  ]
+}

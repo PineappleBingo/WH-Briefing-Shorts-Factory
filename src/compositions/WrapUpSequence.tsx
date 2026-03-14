@@ -13,7 +13,7 @@ export const WrapUpSequence: React.FC<WrapUpSequenceProps> = ({ clip }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>
       <Subtitle en={clip.overlay.en} kr={clip.overlay.kr} />
-      <CTABanner text="Like & Subscribe" />
+      <CTABanner text="Follow for more!" />
     </AbsoluteFill>
   );
 };

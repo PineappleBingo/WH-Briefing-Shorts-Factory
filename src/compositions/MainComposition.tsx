@@ -4,7 +4,8 @@ import { colors } from "../styles/theme";
 import { secondsToFrames, durationFrames } from "../utils/timing";
 import { HookSequence } from "./HookSequence";
 import { ExpressionSequence } from "./ExpressionSequence";
-import { FreezeFrameSequence } from "./FreezeFrameSequence";
+import { BlankSequence } from "./BlankSequence";
+import { RevealSequence } from "./RevealSequence";
 import { WrapUpSequence } from "./WrapUpSequence";
 import type { Part } from "../data";
 
@@ -13,8 +14,10 @@ interface MainCompositionProps {
 }
 
 export const MainComposition: React.FC<MainCompositionProps> = ({ part }) => {
-  const expressionClips = part.clips.filter((c) => c.type === "expression");
-  const totalExpressions = expressionClips.length;
+  // Count expression groups (each group = raw + blank + reveal)
+  const totalExpressions = part.clips.filter(
+    (c) => c.type === "expression_raw",
+  ).length;
   let expressionIndex = 0;
 
   return (
@@ -28,7 +31,7 @@ export const MainComposition: React.FC<MainCompositionProps> = ({ part }) => {
           case "hook":
             content = <HookSequence clip={clip} />;
             break;
-          case "expression":
+          case "expression_raw":
             expressionIndex++;
             content = (
               <ExpressionSequence
@@ -38,8 +41,23 @@ export const MainComposition: React.FC<MainCompositionProps> = ({ part }) => {
               />
             );
             break;
-          case "freeze_frame":
-            content = <FreezeFrameSequence clip={clip} />;
+          case "expression_blank":
+            content = (
+              <BlankSequence
+                clip={clip}
+                index={expressionIndex}
+                total={totalExpressions}
+              />
+            );
+            break;
+          case "expression_reveal":
+            content = (
+              <RevealSequence
+                clip={clip}
+                index={expressionIndex}
+                total={totalExpressions}
+              />
+            );
             break;
           case "wrapup":
             content = <WrapUpSequence clip={clip} />;

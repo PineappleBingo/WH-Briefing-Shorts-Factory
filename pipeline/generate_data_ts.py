@@ -32,6 +32,10 @@ def clip_to_ts(clip: dict, indent: str = "        ") -> str:
     lines.append(f'{indent}    kr: "{kr}",')
     lines.append(f"{indent}  }},")
 
+    if "keyword" in clip:
+        kw = escape_ts_string(clip["keyword"])
+        lines.append(f'{indent}  keyword: "{kw}",')
+
     if "highlightColor" in clip:
         lines.append(f'{indent}  highlightColor: "{clip["highlightColor"]}",')
 
@@ -62,11 +66,12 @@ def generate_data_ts(clips_data: dict) -> str:
 export interface Clip {{
   start: number;
   end: number;
-  type: "hook" | "expression" | "freeze_frame" | "wrapup";
+  type: "hook" | "expression_raw" | "expression_blank" | "expression_reveal" | "wrapup";
   overlay: {{
     en: string;
     kr: string;
   }};
+  keyword?: string;
   highlightColor?: string;
 }}
 
