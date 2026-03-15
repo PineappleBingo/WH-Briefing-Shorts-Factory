@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Video,
   interpolate,
   spring,
   useCurrentFrame,
@@ -17,7 +18,8 @@ interface RevealSequenceProps {
 }
 
 /**
- * Pass 3: Full reveal — keyword highlighted with definition + Korean explanation.
+ * Pass 3: Full reveal — replay the clip with keyword highlighted in the subtitle.
+ * Definition + Korean explanation card fades in over the video.
  */
 export const RevealSequence: React.FC<RevealSequenceProps> = ({
   clip,
@@ -37,6 +39,14 @@ export const RevealSequence: React.FC<RevealSequenceProps> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>
+      {clip.videoSrc && (
+        <Video
+          src={clip.videoSrc}
+          startFrom={Math.round((clip.clipStartSec ?? 0) * fps)}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      )}
+
       {/* Keyword large and highlighted in center */}
       <AbsoluteFill
         style={{
@@ -53,6 +63,7 @@ export const RevealSequence: React.FC<RevealSequenceProps> = ({
             color: highlightColor,
             transform: `scale(${keywordScale})`,
             textAlign: "center",
+            textShadow: "0 2px 8px rgba(0,0,0,0.8)",
           }}
         >
           {keyword}
@@ -82,9 +93,9 @@ export const RevealSequence: React.FC<RevealSequenceProps> = ({
             style={{
               fontFamily: fonts.primary,
               fontSize: 36,
-              color: colors.primary,
+              color: highlightColor,
               marginBottom: 12,
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
             {clip.overlay.en}

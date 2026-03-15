@@ -13,6 +13,10 @@ export interface Clip {
   };
   keyword?: string;
   highlightColor?: string;
+  // Source video for 3-pass playback (raw/blank/reveal share the same segment)
+  videoSrc?: string;
+  clipStartSec?: number;
+  clipEndSec?: number;
 }
 
 export interface Part {
@@ -48,6 +52,9 @@ export const data: ShortsData = {
           },
           keyword: "REITERATE",
           highlightColor: "#00BFFF",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 22.16,
+          clipEndSec: 185.27,
         },
         {
           start: 8.0,
@@ -58,6 +65,9 @@ export const data: ShortsData = {
             kr: "['reiterate'의 한국어 설명]",
           },
           keyword: "REITERATE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 22.16,
+          clipEndSec: 185.27,
         },
         {
           start: 12.0,
@@ -69,6 +79,9 @@ export const data: ShortsData = {
           },
           keyword: "REITERATE",
           highlightColor: "#00BFFF",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 22.16,
+          clipEndSec: 185.27,
         },
         {
           start: 17.0,
@@ -80,6 +93,9 @@ export const data: ShortsData = {
           },
           keyword: "REST ASSURED",
           highlightColor: "#FFD700",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 185.28,
+          clipEndSec: 324.71,
         },
         {
           start: 22.0,
@@ -90,6 +106,9 @@ export const data: ShortsData = {
             kr: "['rest assured'의 한국어 설명]",
           },
           keyword: "REST ASSURED",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 185.28,
+          clipEndSec: 324.71,
         },
         {
           start: 26.0,
@@ -101,6 +120,9 @@ export const data: ShortsData = {
           },
           keyword: "REST ASSURED",
           highlightColor: "#FFD700",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 185.28,
+          clipEndSec: 324.71,
         },
         {
           start: 31.0,
@@ -112,6 +134,9 @@ export const data: ShortsData = {
           },
           keyword: "EXECUTIVE ORDER",
           highlightColor: "#FF6B6B",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 346.8,
+          clipEndSec: 437.67,
         },
         {
           start: 36.0,
@@ -122,6 +147,9 @@ export const data: ShortsData = {
             kr: "['executive order'의 한국어 설명]",
           },
           keyword: "EXECUTIVE ORDER",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 346.8,
+          clipEndSec: 437.67,
         },
         {
           start: 40.0,
@@ -133,6 +161,9 @@ export const data: ShortsData = {
           },
           keyword: "EXECUTIVE ORDER",
           highlightColor: "#FF6B6B",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 346.8,
+          clipEndSec: 437.67,
         },
         {
           start: 45.0,
@@ -144,6 +175,9 @@ export const data: ShortsData = {
           },
           keyword: "IN TERMS OF",
           highlightColor: "#7B68EE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 762.8,
+          clipEndSec: 786.949,
         },
         {
           start: 50.0,
@@ -154,6 +188,9 @@ export const data: ShortsData = {
             kr: "['in terms of'의 한국어 설명]",
           },
           keyword: "IN TERMS OF",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 762.8,
+          clipEndSec: 786.949,
         },
         {
           start: 54.0,
@@ -165,6 +202,9 @@ export const data: ShortsData = {
           },
           keyword: "IN TERMS OF",
           highlightColor: "#7B68EE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 762.8,
+          clipEndSec: 786.949,
         },
         {
           start: 59.0,
@@ -176,6 +216,9 @@ export const data: ShortsData = {
           },
           keyword: "WITH RESPECT TO",
           highlightColor: "#00FA9A",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 967.12,
+          clipEndSec: 982.79,
         },
         {
           start: 64.0,
@@ -186,6 +229,9 @@ export const data: ShortsData = {
             kr: "['with respect to'의 한국어 설명]",
           },
           keyword: "WITH RESPECT TO",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 967.12,
+          clipEndSec: 982.79,
         },
         {
           start: 68.0,
@@ -197,6 +243,9 @@ export const data: ShortsData = {
           },
           keyword: "WITH RESPECT TO",
           highlightColor: "#00FA9A",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 967.12,
+          clipEndSec: 982.79,
         },
         {
           start: 73.0,
@@ -231,6 +280,9 @@ export const data: ShortsData = {
           },
           keyword: "GOOD FAITH",
           highlightColor: "#00BFFF",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1074.32,
+          clipEndSec: 1120.31,
         },
         {
           start: 8.0,
@@ -241,6 +293,9 @@ export const data: ShortsData = {
             kr: "['good faith'의 한국어 설명]",
           },
           keyword: "GOOD FAITH",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1074.32,
+          clipEndSec: 1120.31,
         },
         {
           start: 12.0,
@@ -252,6 +307,9 @@ export const data: ShortsData = {
           },
           keyword: "GOOD FAITH",
           highlightColor: "#00BFFF",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1074.32,
+          clipEndSec: 1120.31,
         },
         {
           start: 17.0,
@@ -263,6 +321,9 @@ export const data: ShortsData = {
           },
           keyword: "FILIBUSTER",
           highlightColor: "#FFD700",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1196.789,
+          clipEndSec: 1196.799,
         },
         {
           start: 22.0,
@@ -273,6 +334,9 @@ export const data: ShortsData = {
             kr: "['filibuster'의 한국어 설명]",
           },
           keyword: "FILIBUSTER",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1196.789,
+          clipEndSec: 1196.799,
         },
         {
           start: 26.0,
@@ -284,6 +348,9 @@ export const data: ShortsData = {
           },
           keyword: "FILIBUSTER",
           highlightColor: "#FFD700",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1196.789,
+          clipEndSec: 1196.799,
         },
         {
           start: 31.0,
@@ -295,6 +362,9 @@ export const data: ShortsData = {
           },
           keyword: "ON THE TABLE",
           highlightColor: "#FF6B6B",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1199.52,
+          clipEndSec: 1223.27,
         },
         {
           start: 36.0,
@@ -305,6 +375,9 @@ export const data: ShortsData = {
             kr: "['on the table'의 한국어 설명]",
           },
           keyword: "ON THE TABLE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1199.52,
+          clipEndSec: 1223.27,
         },
         {
           start: 40.0,
@@ -316,6 +389,9 @@ export const data: ShortsData = {
           },
           keyword: "ON THE TABLE",
           highlightColor: "#FF6B6B",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1199.52,
+          clipEndSec: 1223.27,
         },
         {
           start: 45.0,
@@ -327,6 +403,9 @@ export const data: ShortsData = {
           },
           keyword: "NATIONAL SECURITY",
           highlightColor: "#7B68EE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1259.039,
+          clipEndSec: 1293.59,
         },
         {
           start: 50.0,
@@ -337,6 +416,9 @@ export const data: ShortsData = {
             kr: "['national security'의 한국어 설명]",
           },
           keyword: "NATIONAL SECURITY",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1259.039,
+          clipEndSec: 1293.59,
         },
         {
           start: 54.0,
@@ -348,6 +430,9 @@ export const data: ShortsData = {
           },
           keyword: "NATIONAL SECURITY",
           highlightColor: "#7B68EE",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1259.039,
+          clipEndSec: 1293.59,
         },
         {
           start: 59.0,
@@ -359,6 +444,9 @@ export const data: ShortsData = {
           },
           keyword: "COALITION",
           highlightColor: "#00FA9A",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1500.87,
+          clipEndSec: 1500.88,
         },
         {
           start: 64.0,
@@ -369,6 +457,9 @@ export const data: ShortsData = {
             kr: "['coalition'의 한국어 설명]",
           },
           keyword: "COALITION",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1500.87,
+          clipEndSec: 1500.88,
         },
         {
           start: 68.0,
@@ -380,6 +471,9 @@ export const data: ShortsData = {
           },
           keyword: "COALITION",
           highlightColor: "#00FA9A",
+          videoSrc: "video/source.mp4",
+          clipStartSec: 1500.87,
+          clipEndSec: 1500.88,
         },
         {
           start: 73.0,

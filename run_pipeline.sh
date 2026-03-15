@@ -78,8 +78,17 @@ warn() {
 # --- Prerequisite checks ---
 step "0" "Checking prerequisites"
 
-command -v python3 >/dev/null 2>&1 || fail "python3 is not installed"
-success "python3 found"
+# On Windows the 'python3' command may be a Store stub — prefer 'py' launcher
+if command -v py >/dev/null 2>&1 && py --version >/dev/null 2>&1; then
+  PYTHON=py
+elif command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+  PYTHON=python3
+elif command -v python >/dev/null 2>&1; then
+  PYTHON=python
+else
+  fail "No working Python installation found (tried py, python3, python)"
+fi
+success "$PYTHON $($PYTHON --version 2>&1) found"
 
 command -v node >/dev/null 2>&1 || fail "node is not installed"
 success "node $(node --version) found"
@@ -115,7 +124,7 @@ step "1" "Fetching transcript (yt-dlp + fetch_transcript.py)"
 yt-dlp --no-playlist --write-auto-sub --sub-lang en --skip-download \
   -o "data/%(title)s" "$YT_VIDEO_URL"
 
-python3 pipeline/fetch_transcript.py \
+$PYTHON pipeline/fetch_transcript.py \
   --url "$YT_VIDEO_URL" \
   --out data/transcript.json
 
@@ -124,7 +133,7 @@ success "data/transcript.json created"
 
 step "2" "Extracting expressions (extract_expressions.py)"
 
-python3 pipeline/extract_expressions.py \
+$PYTHON pipeline/extract_expressions.py \
   --in data/transcript.json \
   --out data/expressions_grouped.json
 
@@ -137,7 +146,7 @@ success "data/expressions_grouped.json created"
 
 step "3" "Generating clip definitions (expressions_to_clips.py)"
 
-python3 pipeline/expressions_to_clips.py \
+$PYTHON pipeline/expressions_to_clips.py \
   --in data/expressions_grouped.json \
   --out data/clips.json
 
@@ -146,7 +155,7 @@ success "data/clips.json created"
 
 step "4" "Running QA validation (qa_validator.py)"
 
-python3 pipeline/qa_validator.py \
+$PYTHON pipeline/qa_validator.py \
   --in data/clips.json \
   --out data/qa_report.json
 
@@ -161,7 +170,7 @@ fi
 
 step "5" "Generating Remotion data (generate_data_ts.py)"
 
-python3 pipeline/generate_data_ts.py \
+$PYTHON pipeline/generate_data_ts.py \
   --in "$CLIPS_INPUT" \
   --out src/data.ts
 
@@ -197,7 +206,7 @@ CLIPS_SOURCE="$CLIPS_INPUT"
 if [ ! -f "$CLIPS_SOURCE" ]; then
   CLIPS_SOURCE=data/clips.json
 fi
-PARTS=$(python3 -c "
+PARTS=$($PYTHON -c "
 import json, sys
 with open('$CLIPS_SOURCE') as f:
     d = json.load(f)
@@ -247,7 +256,7 @@ for part in $PARTS; do
   fi
 
   SIZE=$(stat --format="%s" "$OUTPUT" 2>/dev/null || stat -f "%z" "$OUTPUT" 2>/dev/null || echo "0")
-  SIZE_MB=$(python3 -c "print(f'{$SIZE/1048576:.1f}')" 2>/dev/null || echo "?")
+  SIZE_MB=$($PYTHON -c "print(f'{$SIZE/1048576:.1f}')" 2>/dev/null || echo "?")
   echo -e "  $part: ${SIZE_MB} MB"
 
   if [ "$HAS_FFPROBE" = true ]; then
@@ -281,5 +290,5 @@ for part in $PARTS; do
 done
 echo ""
 echo "Optional next steps:"
-echo "  - Generate SRT:  python3 pipeline/generate_srt.py --in $CLIPS_INPUT --out output/part1/subtitles.srt"
+echo "  - Generate SRT:  $PYTHON pipeline/generate_srt.py --in $CLIPS_INPUT --out output/part1/subtitles.srt"
 echo "  - Preview again: npm run studio"

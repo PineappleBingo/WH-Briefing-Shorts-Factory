@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Video,
   spring,
   useCurrentFrame,
   useVideoConfig,
@@ -16,8 +17,8 @@ interface BlankSequenceProps {
 }
 
 /**
- * Pass 2: Replay with the keyword blanked out.
- * The learner tries to recall the expression (cloze deletion).
+ * Pass 2: Blank out — replay the clip with the keyword hidden in the subtitle.
+ * Audio plays normally so the learner must listen and recall the missing word (cloze deletion).
  */
 export const BlankSequence: React.FC<BlankSequenceProps> = ({
   clip,
@@ -31,15 +32,24 @@ export const BlankSequence: React.FC<BlankSequenceProps> = ({
   const keyword = clip.keyword ?? "";
   const blank = "_".repeat(Math.max(5, keyword.length));
 
-  // Replace keyword in the sentence with blanks
-  const sentence = clip.overlay.en;
   const blankedSentence = keyword
-    ? sentence.replace(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), blank)
-    : sentence;
+    ? clip.overlay.en.replace(
+        new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
+        blank,
+      )
+    : clip.overlay.en;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>
-      {/* Question mark prompt */}
+      {clip.videoSrc && (
+        <Video
+          src={clip.videoSrc}
+          startFrom={Math.round((clip.clipStartSec ?? 0) * fps)}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      )}
+
+      {/* "?" prompt — cues learner to listen for the missing word */}
       <AbsoluteFill
         style={{
           justifyContent: "center",
@@ -54,14 +64,14 @@ export const BlankSequence: React.FC<BlankSequenceProps> = ({
             fontWeight: 800,
             color: colors.accent,
             transform: `scale(${blankScale})`,
-            opacity: 0.3,
+            opacity: 0.5,
           }}
         >
           ?
         </div>
       </AbsoluteFill>
 
-      {/* Blanked sentence at bottom */}
+      {/* Blanked subtitle */}
       <AbsoluteFill
         style={{
           justifyContent: "flex-end",

@@ -39,6 +39,13 @@ def clip_to_ts(clip: dict, indent: str = "        ") -> str:
     if "highlightColor" in clip:
         lines.append(f'{indent}  highlightColor: "{clip["highlightColor"]}",')
 
+    if "videoSrc" in clip:
+        lines.append(f'{indent}  videoSrc: "{escape_ts_string(clip["videoSrc"])}",')
+    if "clipStartSec" in clip:
+        lines.append(f'{indent}  clipStartSec: {clip["clipStartSec"]},')
+    if "clipEndSec" in clip:
+        lines.append(f'{indent}  clipEndSec: {clip["clipEndSec"]},')
+
     lines.append(f"{indent}}},")
     return "\n".join(lines)
 
@@ -73,6 +80,10 @@ export interface Clip {{
   }};
   keyword?: string;
   highlightColor?: string;
+  // Source video for 3-pass playback (raw/blank/reveal share the same segment)
+  videoSrc?: string;
+  clipStartSec?: number;
+  clipEndSec?: number;
 }}
 
 export interface Part {{

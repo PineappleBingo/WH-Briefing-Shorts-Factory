@@ -48,6 +48,11 @@ def build_clips_for_group(group: dict) -> dict:
         if cursor + needed + WRAPUP_DURATION > MAX_SHORT_DURATION:
             break
 
+        # Source video segment — all 3 passes replay the same clip
+        video_src = "video/source.mp4"
+        clip_start = expr.get("start", 0.0)
+        clip_end = expr.get("end", clip_start + RAW_DURATION)
+
         # Pass 1: RAW — hear the expression naturally in context
         clips.append({
             "start": round(cursor, 3),
@@ -59,8 +64,9 @@ def build_clips_for_group(group: dict) -> dict:
             },
             "keyword": keyword,
             "highlightColor": highlight_color,
-            "_source_start": expr["start"],
-            "_source_end": expr["end"],
+            "videoSrc": video_src,
+            "clipStartSec": round(clip_start, 3),
+            "clipEndSec": round(clip_end, 3),
         })
         cursor += RAW_DURATION
 
@@ -74,6 +80,9 @@ def build_clips_for_group(group: dict) -> dict:
                 "kr": expr["explanation_kr"],
             },
             "keyword": keyword,
+            "videoSrc": video_src,
+            "clipStartSec": round(clip_start, 3),
+            "clipEndSec": round(clip_end, 3),
         })
         cursor += BLANK_DURATION
 
@@ -88,6 +97,9 @@ def build_clips_for_group(group: dict) -> dict:
             },
             "keyword": keyword,
             "highlightColor": highlight_color,
+            "videoSrc": video_src,
+            "clipStartSec": round(clip_start, 3),
+            "clipEndSec": round(clip_end, 3),
         })
         cursor += REVEAL_DURATION
 
