@@ -8,7 +8,11 @@
       "Bash(where yt-dlp:*)",
       "Bash(pip install:*)",
       "Bash(python3:*)",
-      "Bash(py:*)"
+      "Bash(py:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "mcp__plugin_claude-mem_mcp-search__search",
+      "mcp__plugin_claude-mem_mcp-search__smart_search"
     ]
   }
 }

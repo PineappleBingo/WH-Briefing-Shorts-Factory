@@ -78,17 +78,24 @@ warn() {
 # --- Prerequisite checks ---
 step "0" "Checking prerequisites"
 
-# On Windows the 'python3' command may be a Store stub — prefer 'py' launcher
-if command -v py >/dev/null 2>&1 && py --version >/dev/null 2>&1; then
+# Prefer pipenv virtualenv when Pipfile is present; fall back to system Python
+if [ -f Pipfile ] && command -v pipenv >/dev/null 2>&1; then
+  # Use 'pipenv run' as the Python executor so all packages are available
+  PYTHON="pipenv run python"
+  # Verify the virtualenv is set up
+  pipenv run python -c "import sys" >/dev/null 2>&1 \
+    || fail "Pipenv virtualenv not ready — run: pipenv install"
+elif command -v py >/dev/null 2>&1 && py --version >/dev/null 2>&1; then
   PYTHON=py
 elif command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
   PYTHON=python3
 elif command -v python >/dev/null 2>&1; then
   PYTHON=python
 else
-  fail "No working Python installation found (tried py, python3, python)"
+  fail "No working Python installation found. Run: pipenv install"
 fi
-success "$PYTHON $($PYTHON --version 2>&1) found"
+PY_VERSION=$($PYTHON --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+success "Python ${PY_VERSION} found (${PYTHON})"
 
 command -v node >/dev/null 2>&1 || fail "node is not installed"
 success "node $(node --version) found"
