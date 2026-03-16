@@ -43,6 +43,10 @@ if [ -z "${YT_VIDEO_URL:-}" ]; then
   echo "ERROR: YT_VIDEO_URL is not set in .env"
   exit 1
 fi
+if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+  echo "ERROR: ANTHROPIC_API_KEY is not set in .env (needed for expression enrichment)"
+  exit 1
+fi
 if [ -z "${PERFORMANCE_MODE:-}" ]; then
   echo "WARNING: PERFORMANCE_MODE not set, defaulting to LOW"
   PERFORMANCE_MODE=LOW
@@ -147,6 +151,15 @@ $PYTHON pipeline/extract_expressions.py \
 [ -f data/expressions_grouped.json ] || fail "data/expressions_grouped.json was not created"
 success "data/expressions_grouped.json created"
 
+step "2.5" "Enriching expressions via Claude API (enrich_expressions.py)"
+
+$PYTHON pipeline/enrich_expressions.py \
+  --in data/expressions_grouped.json \
+  --out data/expressions_enriched.json
+
+[ -f data/expressions_enriched.json ] || fail "data/expressions_enriched.json was not created"
+success "data/expressions_enriched.json created"
+
 # ============================================================
 # PHASE 2: DIRECTOR — Clip Definitions & Data Generation
 # ============================================================
@@ -154,7 +167,7 @@ success "data/expressions_grouped.json created"
 step "3" "Generating clip definitions (expressions_to_clips.py)"
 
 $PYTHON pipeline/expressions_to_clips.py \
-  --in data/expressions_grouped.json \
+  --in data/expressions_enriched.json \
   --out data/clips.json
 
 [ -f data/clips.json ] || fail "data/clips.json was not created"
