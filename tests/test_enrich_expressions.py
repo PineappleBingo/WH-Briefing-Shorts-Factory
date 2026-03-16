@@ -11,6 +11,9 @@ from pipeline.enrich_expressions import (
     parse_enrichment_response,
 )
 
+import anthropic
+from pipeline.enrich_expressions import enrich_group, main
+
 
 def make_expr(expression, start, end):
     return {
@@ -181,3 +184,157 @@ class TestParseEnrichmentResponse:
         # Only the matched expression survives; second is silently dropped
         assert len(result) == 1
         assert result[0]["expression"] == "ON THE TABLE"
+
+
+class TestEnrichGroup:
+    def make_group(self, expressions):
+        return {
+            "group_id": "part1",
+            "hook": {"en": "5 Must-Know Expressions", "kr": "필수 표현 5가지"},
+            "closing": {"en": "Follow us!", "kr": "팔로우하세요!"},
+            "expressions": expressions,
+        }
+
+    def _make_mock_client(self, mocker, response_text):
+        mock_client = mocker.MagicMock()
+        mock_client.messages.create.return_value.content = [
+            mocker.MagicMock(text=response_text)
+        ]
+        return mock_client
+
+    def test_enriches_valid_expressions(self, mocker):
+        expressions = [
+            make_expr("ON THE TABLE", 100.0, 115.0),
+            make_expr("GOOD FAITH", 300.0, 320.0),
+        ]
+        group = self.make_group(expressions)
+        response_text = json.dumps([
+            {
+                "expression": "ON THE TABLE",
+                "definition_en": "Available for discussion.",
+                "explanation_kr": "협상 중인 상태.",
+                "example_en": "All options are on the table.",
+                "example_kr": "모든 선택지가 논의 대상입니다.",
+                "keep": True,
+            },
+            {
+                "expression": "GOOD FAITH",
+                "definition_en": "Honest intention to deal fairly.",
+                "explanation_kr": "성실하고 정직한 의도.",
+                "example_en": "They negotiated in good faith.",
+                "example_kr": "그들은 성실하게 협상했습니다.",
+                "keep": True,
+            },
+        ])
+        mock_client = self._make_mock_client(mocker, response_text)
+        result = enrich_group(mock_client, group, model="claude-haiku-4-5-20251001")
+        assert len(result["expressions"]) == 2
+        assert result["expressions"][0]["definition_en"] == "Available for discussion."
+        assert result["expressions"][1]["explanation_kr"] == "성실하고 정직한 의도."
+
+    def test_discards_short_clips_before_api_call(self, mocker):
+        expressions = [
+            make_expr("ON THE TABLE", 100.0, 115.0),   # valid
+            make_expr("FILIBUSTER", 500.0, 500.01),    # too short — filtered before API
+        ]
+        group = self.make_group(expressions)
+        response_text = json.dumps([{
+            "expression": "ON THE TABLE",
+            "definition_en": "Available for discussion.",
+            "explanation_kr": "협상 중인 상태.",
+            "example_en": "All options are on the table.",
+            "example_kr": "모든 선택지가 논의 대상입니다.",
+            "keep": True,
+        }])
+        mock_client = self._make_mock_client(mocker, response_text)
+        result = enrich_group(mock_client, group, model="claude-haiku-4-5-20251001")
+        # FILIBUSTER must not appear in the prompt sent to Claude
+        call_args = mock_client.messages.create.call_args
+        prompt_sent = call_args[1]["messages"][0]["content"]
+        assert "FILIBUSTER" not in prompt_sent
+        assert len(result["expressions"]) == 1
+
+    def test_all_filtered_returns_empty_group_without_api_call(self, mocker):
+        expressions = [make_expr("FILIBUSTER", 500.0, 500.01)]
+        group = self.make_group(expressions)
+        mock_client = mocker.MagicMock()
+        result = enrich_group(mock_client, group, model="claude-haiku-4-5-20251001")
+        mock_client.messages.create.assert_not_called()
+        assert result["expressions"] == []
+        # Other group fields must be preserved
+        assert result["group_id"] == "part1"
+        assert "hook" in result
+
+    def test_api_error_propagates(self, mocker):
+        expressions = [make_expr("ON THE TABLE", 100.0, 115.0)]
+        group = self.make_group(expressions)
+        mock_client = mocker.MagicMock()
+        mock_client.messages.create.side_effect = anthropic.APIStatusError(
+            message="rate limit", response=mocker.MagicMock(), body=None
+        )
+        with pytest.raises(anthropic.APIStatusError):
+            enrich_group(mock_client, group, model="claude-haiku-4-5-20251001")
+
+    def test_connection_error_propagates(self, mocker):
+        expressions = [make_expr("ON THE TABLE", 100.0, 115.0)]
+        group = self.make_group(expressions)
+        mock_client = mocker.MagicMock()
+        mock_client.messages.create.side_effect = anthropic.APIConnectionError(
+            request=mocker.MagicMock()
+        )
+        with pytest.raises(anthropic.APIConnectionError):
+            enrich_group(mock_client, group, model="claude-haiku-4-5-20251001")
+
+
+class TestMain:
+    def test_exits_nonzero_if_api_key_missing(self, tmp_path, mocker):
+        input_file = tmp_path / "expressions_grouped.json"
+        input_file.write_text(json.dumps({
+            "title": "Test",
+            "source_url": "",
+            "total_expressions": 0,
+            "groups": [],
+        }))
+        output_file = tmp_path / "out.json"
+        mocker.patch.dict(os.environ, {"ANTHROPIC_API_KEY": ""})
+        mocker.patch("sys.argv", [
+            "enrich_expressions.py",
+            "--in", str(input_file),
+            "--out", str(output_file),
+        ])
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 1
+        assert not output_file.exists()
+
+    def test_exits_nonzero_on_api_error_without_writing_output(self, tmp_path, mocker):
+        input_file = tmp_path / "expressions_grouped.json"
+        input_file.write_text(json.dumps({
+            "title": "Test",
+            "source_url": "",
+            "total_expressions": 1,
+            "groups": [{
+                "group_id": "part1",
+                "hook": {"en": "Hook", "kr": "훅"},
+                "closing": {"en": "Close", "kr": "닫기"},
+                "expressions": [make_expr("ON THE TABLE", 100.0, 115.0)],
+            }],
+        }))
+        output_file = tmp_path / "out.json"
+        mocker.patch.dict(os.environ, {
+            "ANTHROPIC_API_KEY": "test-key",
+            "PERFORMANCE_MODE": "LOW",
+        })
+        mocker.patch("sys.argv", [
+            "enrich_expressions.py",
+            "--in", str(input_file),
+            "--out", str(output_file),
+        ])
+        mocker.patch(
+            "pipeline.enrich_expressions.enrich_group",
+            side_effect=anthropic.APIConnectionError(request=mocker.MagicMock()),
+        )
+        with pytest.raises(SystemExit) as exc:
+            main()
+        assert exc.value.code == 1
+        assert not output_file.exists()

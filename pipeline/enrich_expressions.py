@@ -126,3 +126,130 @@ def parse_enrichment_response(
         merged["example_kr"] = enr["example_kr"]
         result.append(merged)
     return result
+
+
+def enrich_group(client: anthropic.Anthropic, group: dict, model: str) -> dict:
+    """Enrich one expression group via Claude API.
+
+    Filters short clips first, then calls Claude for remaining expressions.
+    If all expressions are filtered before the API call, returns the group
+    with an empty expressions list and makes no API call.
+
+    Args:
+        client: Anthropic API client.
+        group: Single group dict from expressions_grouped.json.
+        model: Claude model ID to use.
+
+    Returns:
+        Group dict with enriched expressions. Preserves all non-expression fields.
+
+    Raises:
+        anthropic.APIError / APIConnectionError on API failure.
+        ValueError if the API response cannot be parsed.
+    """
+    expressions = group["expressions"]
+
+    valid, discarded = filter_short_clips(expressions)
+    for d in discarded:
+        dur = round(d["end"] - d["start"], 3)
+        print(f"    Discarded (source clip {dur}s < {MIN_SOURCE_DURATION}s): {d['expression']}")
+
+    if not valid:
+        print(f"    Warning: all expressions discarded for {group['group_id']} — empty group")
+        return {**group, "expressions": []}
+
+    prompt = build_prompt(valid)
+
+    message = client.messages.create(
+        model=model,
+        max_tokens=2048,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    response_text = message.content[0].text
+    enriched_expressions = parse_enrichment_response(response_text, valid)
+
+    remaining = len(enriched_expressions)
+    if remaining < 3:
+        print(
+            f"    Warning: {group['group_id']} has only {remaining} expression(s) "
+            f"after enrichment (started with {len(expressions)})"
+        )
+
+    return {**group, "expressions": enriched_expressions}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Enrich expressions via Claude API")
+    parser.add_argument("--in", dest="input", required=True, help="Input expressions_grouped.json")
+    parser.add_argument("--out", required=True, help="Output expressions_enriched.json")
+    args = parser.parse_args()
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("ERROR: ANTHROPIC_API_KEY is not set", file=sys.stderr)
+        sys.exit(1)
+
+    performance_mode = os.environ.get("PERFORMANCE_MODE", "LOW").upper()
+    model = (
+        "claude-haiku-4-5-20251001" if performance_mode == "LOW" else "claude-sonnet-4-6"
+    )
+    print(f"  Model: {model} (PERFORMANCE_MODE={performance_mode})")
+
+    with open(args.input, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    groups = data.get("groups", [])
+    if not groups:
+        print("ERROR: No groups found in input file", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"  Enriching {len(groups)} groups...")
+
+    client = anthropic.Anthropic(api_key=api_key)
+    enriched_groups = []
+
+    for group in groups:
+        print(f"  Group: {group['group_id']} ({len(group['expressions'])} expressions)")
+        try:
+            enriched = enrich_group(client, group, model=model)
+        except (
+            anthropic.APIError,         # covers 4xx/5xx and RateLimitError subclasses
+            anthropic.APIConnectionError,  # network failures — not a subclass of APIError
+        ) as e:
+            print(
+                f"ERROR: Claude API call failed for {group['group_id']}: {e}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        except ValueError as e:
+            print(
+                f"ERROR: Failed to parse Claude response for {group['group_id']}: {e}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        enriched_groups.append(enriched)
+
+    total = sum(len(g["expressions"]) for g in enriched_groups)
+
+    output = {
+        "title": data.get("title", ""),
+        "source_url": data.get("source_url", ""),
+        "total_expressions": total,
+        "groups": enriched_groups,
+    }
+
+    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
+
+    # Write only after all groups succeed — no partial output on error
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
+
+    print(f"  Output: {args.out} ({total} expressions in {len(enriched_groups)} groups)")
+    for g in enriched_groups:
+        exprs = ", ".join(e["expression"] for e in g["expressions"])
+        print(f"    {g['group_id']}: {exprs or '(empty)'}")
+
+
+if __name__ == "__main__":
+    main()
