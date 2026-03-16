@@ -18,6 +18,7 @@ import textwrap
 MAX_LINES = 2
 MAX_CHARS_PER_LINE = 42
 MAX_DURATION = 180.0
+MIN_BACKSTOP_SOURCE_DURATION = 1.0  # seconds; backstop for near-zero source clips
 
 
 def wrap_text(text: str, max_chars: int = MAX_CHARS_PER_LINE, max_lines: int = MAX_LINES) -> str:
@@ -134,6 +135,24 @@ def validate_and_fix_part(part: dict) -> tuple[dict, list[dict]]:
                 "auto_fixed": True,
             })
             continue
+
+        # Backstop: discard clips with near-zero source video duration.
+        # Primary filter is in enrich_expressions.py — this should rarely trigger.
+        if "clipStartSec" in fixed_clip and "clipEndSec" in fixed_clip:
+            source_duration = fixed_clip["clipEndSec"] - fixed_clip["clipStartSec"]
+            if source_duration <= MIN_BACKSTOP_SOURCE_DURATION:
+                issues.append({
+                    "part": part_id,
+                    "clip": i,
+                    "field": "clipStartSec/clipEndSec",
+                    "rule": "min_source_duration",
+                    "detail": (
+                        f"source clip {source_duration:.3f}s "
+                        f"(min {MIN_BACKSTOP_SOURCE_DURATION}s) — clip dropped"
+                    ),
+                    "auto_fixed": True,
+                })
+                continue  # skip appending this clip to fixed_clips
 
         # Validate and fix overlay text
         if "overlay" in fixed_clip:
