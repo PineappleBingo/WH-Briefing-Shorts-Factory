@@ -12,7 +12,17 @@
       "Bash(grep:*)",
       "Bash(ls:*)",
       "mcp__plugin_claude-mem_mcp-search__search",
-      "mcp__plugin_claude-mem_mcp-search__smart_search"
+      "mcp__plugin_claude-mem_mcp-search__smart_search",
+      "Read(//c/Users/pinea/.claude/plugins/**)",
+      "Bash(pipenv run:*)",
+      "Bash(python:*)",
+      "Bash(bash -n /d/gitprojects/WH-Briefing-Shorts-Factory/run_pipeline.sh)",
+      "Bash(git add:*)",
+      "Bash(bash -n \"D:/gitprojects/WH-Briefing-Shorts-Factory/run_pipeline.sh\" 2>&1; echo \"exit code: $?\")",
+      "Bash(bash -n run_pipeline.sh && echo \"Syntax OK\")",
+      "Bash(echo \"Exit code: $?\")",
+      "Read(//tmp/**)",
+      "WebSearch"
     ]
   }
 }

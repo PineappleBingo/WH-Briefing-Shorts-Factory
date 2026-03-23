@@ -17,6 +17,8 @@
 
 Single public function: `call_gemini(prompt: str, api_key: str) -> str`
 
+**Return value:** The raw response body text string from the first successful model. Always a plain `str` — never a parsed object or SDK response type.
+
 **Fallback chain (in order):**
 
 | # | Model ID | Tier | Notes |
@@ -25,13 +27,17 @@ Single public function: `call_gemini(prompt: str, api_key: str) -> str`
 | 2 | `gemini-2.5-flash` | Free (10 RPM) | Better quality |
 | 3 | `gemini-2.5-pro` | Free (5 RPM) | Best quality |
 
-**Advance to next model on:**
-- Any API or network error (`google.api_core.exceptions.GoogleAPIError`, connection errors)
-- Rate limit / quota exceeded (`ResourceExhausted`, HTTP 429)
-- Response is unparseable JSON (quality failure)
-- Response JSON is missing any required field (`definition_en`, `explanation_kr`, `example_en`, `example_kr`, `keep`)
+**Advance to next model on (4 triggers):**
+1. Any API or network error (`google.api_core.exceptions.GoogleAPIError`, connection errors)
+2. Rate limit / quota exceeded (`ResourceExhausted`, HTTP 429)
+3. Response body is not parseable as JSON
+4. Response JSON parses successfully but **any single object** in the array is missing one or more required fields (`definition_en`, `explanation_kr`, `example_en`, `example_kr`, `keep`) — the entire call is retried with the next model; partial arrays are not accepted
 
-**When all 3 models fail:** raise `RuntimeError` with the last error/reason. `main()` catches this and exits with code 1.
+**Quality validation is internal to `call_gemini`:** The function parses the JSON response internally to check required field presence. If validation passes, it returns the raw text string to the caller. The caller (`parse_enrichment_response`) re-parses the same string — this is intentional. `call_gemini` is responsible only for ensuring a structurally valid response was received; `parse_enrichment_response` handles semantic filtering (`keep: false`).
+
+**All-`keep: false` responses are acceptable:** If a model returns valid JSON with all required fields present, but sets `keep: false` on every expression, `call_gemini` considers this a successful response and returns it. It is not a quality failure. The group will end up empty after `parse_enrichment_response` filters, and the existing warning path in `enrich_group` handles that. A smarter model is not retried solely because all expressions were rejected.
+
+**When all 3 models fail:** raise `RuntimeError` with a message in the format: `"All 3 Gemini models failed. Last failure (<model-id>): <reason>"`. `main()` catches this and exits with code 1.
 
 **SDK:** `google-generativeai` Python package.
 
